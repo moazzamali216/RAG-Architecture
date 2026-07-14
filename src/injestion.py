@@ -13,8 +13,8 @@ def readPDF(pdfpath):
 def Charactersplit_Chunking(pdf_to_str):
     text = pdf_to_str
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=10,
+        chunk_size=1000,
+        chunk_overlap=150,
     )
     chunks = text_splitter.split_text(text)
     return chunks
@@ -29,14 +29,15 @@ def Chunk_Embeddings(preprocessed_chunks_string):
         embeddings.append(response["embedding"])
     return embeddings
 
-def storetoChroma(chunks, embeddings):
+def storetoChroma(chunks, embeddings, source_name="test.pdf"):
     client = chromadb.PersistentClient(path="./chroma_langchain_db")
     collection = client.get_or_create_collection("pdf_collection")
     
     collection.add(
-        ids=[str(i) for i in range(len(chunks))],
+        ids=[f"{source_name}_{i}" for i in range(len(chunks))],  # e.g. "test.pdf_0", "test.pdf_1"
         documents=chunks,
-        embeddings=embeddings
+        embeddings=embeddings,
+        metadatas=[{"source": source_name, "chunk_index": i} for i in range(len(chunks))]
     )
     return collection
 
@@ -45,5 +46,6 @@ def InjestionPipeLine(pathtopdf):
     injestion_str = "\n".join(doc.page_content for doc in documents)
     preprocessed_chunks = Charactersplit_Chunking(injestion_str)
     embedded_chunks = Chunk_Embeddings(preprocessed_chunks)
-    chromadbvectors = storetoChroma(preprocessed_chunks, embedded_chunks)
+    source_name = Path(pathtopdf).name
+    chromadbvectors = storetoChroma(preprocessed_chunks, embedded_chunks,source_name)
     return chromadbvectors

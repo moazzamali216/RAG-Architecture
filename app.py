@@ -4,16 +4,16 @@ from src.retrieval import RetrievalPipeline
 pdf = "./pdf/test.pdf"
 
 # Ingest PDF first
-print("📄 Ingesting PDF...")
-InjestionPipeLine(pdf)
-print("✅ PDF ingested!")
-print("=" * 60)
+# print("📄 Ingesting PDF...")
+# InjestionPipeLine(pdf)
+# print("✅ PDF ingested!")
+# print("=" * 60)
 
-# Test single query
-print("\n🔍 Testing with single query...")
-answer = RetrievalPipeline("How many people died in 2026 war")
-print(f"Answer: {answer}")
-print("=" * 60)
+# # Test single query
+# print("\n🔍 Testing with single query...")
+# answer = RetrievalPipeline("Which 2 countries had a war in 2026?")
+# print(f"Answer: {answer}")
+# # print("=" * 60)
 
 # Chat loop
 print("\n💬 RAG CHATBOT")
